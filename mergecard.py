@@ -71,9 +71,25 @@ def getscreen(ow, res):
 
 def findimage(source, destination):
     import aircv as ac
-    imsrc = ac.imread('./img/temp1.png')  # 原始图像
-    imsch = ac.imread('./img/scrapy.png')  # 带查找的部分
-    print(ac.find_template(imsrc, imsch,con))
+    from PIL import Image
+
+    imsrc = ac.imread('./img/taiyin_1_s.png')  # 原始图像
+    imsch = ac.imread('./img/temp3.png')  # 带查找的部分
+    # print(ac.find_all_template(imsrc, imsch, ))
+    temp = ac.find_all_template(imsrc, imsch, threshold=0.9)
+    for i in temp:
+        print(i)
+        top_left = i['rectangle'][0]
+        top_right = [top_left[0] + imsrc.shape[0], top_left[1]]
+        bottom_right = [top_left[0] + imsrc.shape[0], top_left[1] + imsrc.shape[1]]
+        bottom_left = [top_left[0], top_left[1] + imsrc.shape[1]]
+        square = np.array([(top_left, top_right, bottom_right, bottom_left)])
+        print(square)
+        # square = np.array([[(1827, 695), (1827, 1873), (695, 1873), (695, 714)]])
+        cv2.polylines(imsch, square, 1, (255, 255, 255, 1), 2)
+        img = cv2.cvtColor(imsch, cv2.COLOR_BGRA2RGB)
+        im = Image.fromarray(img)
+        im.show()
     return 0
 
 
@@ -81,4 +97,4 @@ if __name__ == '__main__':
     # res = getallOnmyoji()
     # temp = res[0]
     # getscreen(temp, None)
-    findimage(1,2)
+    findimage(1, 2)
